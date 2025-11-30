@@ -1,87 +1,87 @@
-# CLAUDE.md - AI Assistant Development Guide
+# CLAUDE.md - AI アシスタント開発ガイド
 
-## Project Overview
+## プロジェクト概要
 
-**Cognitive Sync** (Codename: Meirei-kun) is an AI-driven communication orchestration tool designed to bridge the "cognitive gap" between managers (instructors) and team members (recipients). It transforms ambiguous, fragmented instructions into structured, executable specifications using Google Gemini's long-context capabilities.
+**Cognitive Sync**（コードネーム：命令くん）は、上司（指示者）と部下（受領者）の間に発生する「認知のズレ」を解消するAI駆動型コミュニケーション・オーケストレーションツールです。Google Geminiのロングコンテキスト機能を活用し、曖昧で断片的な指示を、構造化された実行可能な仕様書に変換します。
 
-### Core Value Proposition
+### コアバリュー
 
-1. **Context-Aware**: Analyzes uploaded documents (PDFs, text files) to understand background context
-2. **Socratic Clarification**: Uses AI-driven questioning to extract missing information
-3. **Structured Output**: Converts rough input into complete, unambiguous instruction documents
+1. **Context-Aware（文脈認識）**: アップロードされたドキュメント（PDF、テキストファイル）を分析し、背景文脈を理解
+2. **Socratic Clarification（ソクラテス式問答）**: AI駆動の質問によって不足情報を引き出す
+3. **Structured Output（構造化出力）**: 雑な入力を完全で曖昧さのない指示書に変換
 
-## Technology Stack
+## 技術スタック
 
-### Frontend
-- **Framework**: Next.js 16.0.5 (App Router)
-- **Language**: TypeScript 5.x with strict mode enabled
-- **Styling**: Tailwind CSS 4.x
-- **UI Components**: shadcn/ui (Radix UI primitives)
-- **Icons**: Lucide React
-- **State Management**:
-  - React Hooks (local state)
-  - Nuqs (URL state management)
-  - Vercel AI SDK's `useChat` hook for chat interactions
+### フロントエンド
+- **フレームワーク**: Next.js 16.0.5 (App Router)
+- **言語**: TypeScript 5.x（厳格モード有効）
+- **スタイリング**: Tailwind CSS 4.x
+- **UIコンポーネント**: shadcn/ui（Radix UIプリミティブ）
+- **アイコン**: Lucide React
+- **状態管理**:
+  - React Hooks（ローカル状態）
+  - Nuqs（URL状態管理）
+  - Vercel AI SDKの`useChat`フック（チャット用）
 
-### Backend/API
-- **Architecture**: Next.js Server Actions & API Routes (no separate backend)
-- **Runtime**: Edge Runtime (maxDuration: 30s for AI routes)
-- **Database**: Supabase (PostgreSQL with pgvector extension)
-- **Authentication**: Supabase Auth (planned: Google & Email providers)
+### バックエンド/API
+- **アーキテクチャ**: Next.js Server Actions & API Routes（独立したバックエンドなし）
+- **ランタイム**: Edge Runtime（AIルートのmaxDuration: 30秒）
+- **データベース**: Supabase（pgvector拡張付きPostgreSQL）
+- **認証**: Supabase Auth（予定：Google & Emailプロバイダー）
 
 ### AI/ML
-- **Primary Model**: Google Gemini 1.5 Pro (`gemini-1.5-pro-latest`)
-  - Used for: Complex reasoning, context analysis, instruction structuring
-- **Fast Model**: Google Gemini 1.5 Flash (planned for quick interactions)
-- **SDK**: Vercel AI SDK (`ai` package) with `@ai-sdk/google`
-- **Pattern**: Streaming text responses with structured JSON extraction
+- **主要モデル**: Google Gemini 1.5 Pro (`gemini-1.5-pro-latest`)
+  - 用途：複雑な推論、文脈分析、指示の構造化
+- **高速モデル**: Google Gemini 1.5 Flash（予定：高速インタラクション用）
+- **SDK**: Vercel AI SDK (`ai`パッケージ) + `@ai-sdk/google`
+- **パターン**: ストリーミングテキストレスポンス + 構造化JSON抽出
 
-## Project Structure
+## プロジェクト構造
 
 ```
 Cognitive-Sync/
 ├── app/                          # Next.js App Router
 │   ├── api/
 │   │   └── chat/
-│   │       └── route.ts         # AI chat endpoint (Gemini streaming)
+│   │       └── route.ts         # AIチャットエンドポイント（Geminiストリーミング）
 │   ├── dashboard/
-│   │   └── page.tsx             # Main dashboard (instruction list)
+│   │   └── page.tsx             # メインダッシュボード（指示一覧）
 │   ├── studio/
 │   │   └── [id]/
-│   │       └── page.tsx         # Core 3-panel workspace
+│   │       └── page.tsx         # コア3パネルワークスペース
 │   ├── settings/
-│   │   └── page.tsx             # User preferences (planned)
-│   ├── layout.tsx               # Root layout with metadata
-│   ├── page.tsx                 # Root redirect to dashboard
-│   └── globals.css              # Tailwind global styles
+│   │   └── page.tsx             # ユーザー設定（予定）
+│   ├── layout.tsx               # ルートレイアウト（メタデータ付き）
+│   ├── page.tsx                 # ルート（ダッシュボードへリダイレクト）
+│   └── globals.css              # Tailwindグローバルスタイル
 ├── components/
-│   └── ui/                      # shadcn/ui components
+│   └── ui/                      # shadcn/uiコンポーネント
 │       ├── button.tsx
 │       ├── card.tsx
-│       ├── resizable.tsx        # Used in Studio 3-panel layout
+│       ├── resizable.tsx        # Studio 3パネルレイアウトで使用
 │       ├── scroll-area.tsx
-│       └── ...                  # Other UI primitives
+│       └── ...                  # その他のUIプリミティブ
 ├── lib/
-│   ├── supabase.ts              # Supabase client configuration
-│   └── utils.ts                 # Utility functions (cn helper)
-├── public/                      # Static assets
+│   ├── supabase.ts              # Supabaseクライアント設定
+│   └── utils.ts                 # ユーティリティ関数（cnヘルパー）
+├── public/                      # 静的アセット
 ├── .gitignore
-├── components.json              # shadcn/ui configuration
+├── components.json              # shadcn/ui設定
 ├── package.json
 ├── tsconfig.json
 ├── next.config.ts
-├── Meirei-kun_PRD.md           # Detailed Product Requirements (Japanese)
-└── README.md                    # Quick start guide
+├── Meirei-kun_PRD.md           # 詳細な製品要求仕様書（日本語）
+└── README.md                    # クイックスタートガイド
 ```
 
-## Key File Responsibilities
+## 主要ファイルの責務
 
 ### `/app/api/chat/route.ts`
-- **Purpose**: AI chat endpoint for instruction refinement
-- **Model**: Gemini 1.5 Pro
-- **System Prompt**: Implements the "Socratic PM" persona
-- **Response Format**: Streaming text with embedded JSON blocks
-- **Key Pattern**:
+- **目的**: 指示の洗練のためのAIチャットエンドポイント
+- **モデル**: Gemini 1.5 Pro
+- **システムプロンプト**: 「ソクラテス式PM」ペルソナを実装
+- **レスポンス形式**: 埋め込みJSONブロック付きストリーミングテキスト
+- **主要パターン**:
   ```typescript
   streamText({
     model: google('gemini-1.5-pro-latest'),
@@ -91,226 +91,226 @@ Cognitive-Sync/
   ```
 
 ### `/app/studio/[id]/page.tsx`
-- **Architecture**: 3-panel resizable layout
-  - **Left Panel**: Context assets (file upload, target audience input)
-  - **Center Panel**: Chat interface with Gemini AI
-  - **Right Panel**: Live preview of structured instruction
-- **State Management**:
-  - `useChat()` from Vercel AI SDK
-  - Local state for preview data extraction
-- **Key Pattern**: Extracts JSON from markdown code blocks in AI responses
+- **アーキテクチャ**: 3パネルのリサイズ可能レイアウト
+  - **左パネル**: コンテキストアセット（ファイルアップロード、ターゲット読者入力）
+  - **中央パネル**: Gemini AIとのチャットインターフェース
+  - **右パネル**: 構造化された指示書のライブプレビュー
+- **状態管理**:
+  - Vercel AI SDKの`useChat()`
+  - プレビューデータ抽出用のローカル状態
+- **主要パターン**: AIレスポンス内のマークダウンコードブロックからJSONを抽出
   ```typescript
   const jsonMatch = message.content.match(/```json\n([\s\S]*?)\n```/)
   ```
 
 ### `/lib/supabase.ts`
-- **Purpose**: Supabase client singleton
-- **Pattern**: Uses environment variables for configuration
-- **Required ENV**:
+- **目的**: Supabaseクライアントシングルトン
+- **パターン**: 環境変数を使用した設定
+- **必要な環境変数**:
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-## Database Schema (Planned)
+## データベーススキーマ（予定）
 
-The following schema is defined in the PRD but not yet fully implemented:
+以下のスキーマはPRDで定義されていますが、まだ完全には実装されていません：
 
-### Tables
+### テーブル一覧
 
 #### `profiles`
-- User information linked to Supabase Auth
-- Fields: `id`, `email`, `display_name`, `role`, `tone_preference`
+- Supabase Authに連携されたユーザー情報
+- フィールド: `id`, `email`, `display_name`, `role`, `tone_preference`
 
 #### `workspaces`
-- Team/project organization unit (for future multi-team support)
-- Fields: `id`, `name`, `owner_id`
+- チーム/プロジェクトの組織単位（将来のマルチチームサポート用）
+- フィールド: `id`, `name`, `owner_id`
 
 #### `context_assets`
-- Uploaded documents (PDFs, text files, URLs)
-- Fields: `id`, `workspace_id`, `user_id`, `file_name`, `file_type`, `content_text`, `summary_embedding`
-- **Note**: `summary_embedding` uses pgvector for future RAG implementation
+- アップロードされたドキュメント（PDF、テキストファイル、URL）
+- フィールド: `id`, `workspace_id`, `user_id`, `file_name`, `file_type`, `content_text`, `summary_embedding`
+- **注記**: `summary_embedding`は将来のRAG実装のためpgvectorを使用
 
 #### `instructions`
-- Core entity: generated instruction documents
-- Fields: `id`, `user_id`, `workspace_id`, `original_input`, `clarified_context`, `structured_output` (JSONB), `final_text`, `status`
+- コアエンティティ：生成された指示書ドキュメント
+- フィールド: `id`, `user_id`, `workspace_id`, `original_input`, `clarified_context`, `structured_output` (JSONB), `final_text`, `status`
 
 #### `instruction_versions`
-- Version history for learning and iteration
-- Fields: `id`, `instruction_id`, `content` (JSONB), `feedback_score`
+- 学習と反復のためのバージョン履歴
+- フィールド: `id`, `instruction_id`, `content` (JSONB), `feedback_score`
 
-## AI System Prompt Architecture
+## AIシステムプロンプトアーキテクチャ
 
-Located in `/app/api/chat/route.ts`, the system prompt defines the AI's behavior:
+`/app/api/chat/route.ts`に配置されており、AIの振る舞いを定義します：
 
-### Role Definition
-- **Persona**: World-class project manager and editor
-- **Goal**: Convert ambiguous input into perfect specifications
+### ロール定義
+- **ペルソナ**: 世界最高峰のプロジェクトマネージャー兼エディター
+- **目標**: 曖昧な入力を完璧な仕様書に変換
 
-### Core Behavior Rules
+### コア行動ルール
 
-1. **Context First**: Prioritize uploaded documents as source of truth
-2. **Socratic Questioning**: Ask clarifying questions for missing elements:
-   - Specific deadlines (When)
-   - Completion criteria (Quality)
-   - Target audience (Who for)
-   - Rationale (Why/Intent)
-3. **Structure**: Always output in Markdown format
+1. **Context First（コンテキスト優先）**: アップロードされたドキュメントを真実の情報源として優先
+2. **Socratic Questioning（ソクラテス式問答）**: 不足要素について明確化する質問を行う：
+   - 具体的な期限（When）
+   - 完了基準（Quality）
+   - ターゲット読者（Who for）
+   - 理由（Why/Intent）
+3. **Structure（構造化）**: 常にMarkdown形式で出力
 
-### Output Schema
+### 出力スキーマ
 
-The AI is instructed to embed JSON blocks in its responses:
+AIはレスポンス内にJSONブロックを埋め込むよう指示されています：
 
 ```json
 {
-  "title": "Task title",
-  "summary": "One-line summary",
+  "title": "タスクのタイトル",
+  "summary": "1行要約",
   "sections": [
-    { "heading": "Background & Purpose", "content": "..." },
-    { "heading": "Specific Tasks", "content": "..." },
-    { "heading": "Completion Requirements", "content": "..." }
+    { "heading": "背景・目的", "content": "..." },
+    { "heading": "具体的タスク", "content": "..." },
+    { "heading": "完了要件", "content": "..." }
   ],
-  "missing_info": ["deadline", "target audience"]
+  "missing_info": ["期限", "ターゲット読者"]
 }
 ```
 
-## Development Workflows
+## 開発ワークフロー
 
-### Setting Up the Development Environment
+### 開発環境のセットアップ
 
 ```bash
-# Install dependencies
+# 依存関係のインストール
 npm install
 
-# Set up environment variables
-# Create .env.local with:
+# 環境変数の設定
+# .env.localを作成し、以下を記述：
 # - NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 # - NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 # - GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_key
 
-# Run development server
+# 開発サーバーの起動
 npm run dev
 ```
 
-### Adding New UI Components
+### 新しいUIコンポーネントの追加
 
-This project uses shadcn/ui. To add components:
+このプロジェクトはshadcn/uiを使用しています。コンポーネント追加方法：
 
 ```bash
 npx shadcn@latest add [component-name]
 ```
 
-Configuration is in `components.json`:
-- Style: "new-york"
-- RSC: Enabled
-- Base color: Neutral
-- Icon library: Lucide
+`components.json`の設定：
+- スタイル: "new-york"
+- RSC: 有効
+- ベースカラー: Neutral
+- アイコンライブラリ: Lucide
 
-### Code Conventions
+### コーディング規約
 
 #### TypeScript
-- **Strict mode**: Enabled
-- **Target**: ES2017
-- **Module resolution**: Bundler
-- **Path aliases**: `@/*` maps to project root
+- **厳格モード**: 有効
+- **ターゲット**: ES2017
+- **モジュール解決**: Bundler
+- **パスエイリアス**: `@/*`がプロジェクトルートにマッピング
 
-#### Import Patterns
+#### インポートパターン
 ```typescript
-// UI components
+// UIコンポーネント
 import { Button } from "@/components/ui/button"
 
-// Lib utilities
+// ライブラリユーティリティ
 import { supabase } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
 
-// External packages
+// 外部パッケージ
 import { useChat } from "ai/react"
 ```
 
-#### Component Structure
-- Use `"use client"` directive for interactive components
-- Prefer functional components with TypeScript interfaces
-- Use Radix UI primitives through shadcn/ui wrappers
+#### コンポーネント構造
+- インタラクティブなコンポーネントには`"use client"`ディレクティブを使用
+- TypeScriptインターフェースを持つ関数コンポーネントを優先
+- shadcn/uiラッパーを通じてRadix UIプリミティブを使用
 
-#### Styling
-- Tailwind utility classes
-- Use `cn()` helper from `@/lib/utils` for conditional classes
-- Follow shadcn/ui color system (muted, primary, etc.)
+#### スタイリング
+- Tailwindユーティリティクラス
+- 条件付きクラスには`@/lib/utils`の`cn()`ヘルパーを使用
+- shadcn/uiのカラーシステムに従う（muted、primaryなど）
 
-## AI Assistant Guidelines
+## AIアシスタントガイドライン
 
-### When Modifying the Codebase
+### コードベース変更時の注意点
 
-1. **Respect the Tech Stack**: Do not introduce technologies outside the specified stack
-2. **Maintain File Structure**: Keep the established directory organization
-3. **Follow Naming Conventions**:
-   - Files: kebab-case for pages, PascalCase for components
-   - Components: PascalCase
-   - Functions: camelCase
-   - Database: snake_case
+1. **技術スタックの尊重**: 指定されたスタック外の技術を導入しない
+2. **ファイル構造の維持**: 確立されたディレクトリ構成を保つ
+3. **命名規則に従う**:
+   - ファイル: ページはkebab-case、コンポーネントはPascalCase
+   - コンポーネント: PascalCase
+   - 関数: camelCase
+   - データベース: snake_case
 
-### Key Architectural Decisions
+### 主要なアーキテクチャ決定
 
-1. **No External Backend**: Everything runs on Next.js (App Router + Server Actions)
-2. **Streaming First**: Use Vercel AI SDK's streaming capabilities for responsive UX
-3. **Client-Side Extraction**: JSON extraction from AI responses happens in React components
-4. **Resizable Panels**: The Studio uses `react-resizable-panels` for flexible workspace
+1. **外部バックエンドなし**: すべてNext.js上で動作（App Router + Server Actions）
+2. **ストリーミング優先**: レスポンシブなUXのためVercel AI SDKのストリーミング機能を使用
+3. **クライアントサイド抽出**: AIレスポンスからのJSON抽出はReactコンポーネント内で実行
+4. **リサイズ可能パネル**: Studioは柔軟なワークスペースのため`react-resizable-panels`を使用
 
-### Common Patterns
+### 共通パターン
 
-#### Creating a New Page
+#### 新しいページの作成
 ```typescript
 // app/new-page/page.tsx
 export default function NewPage() {
   return (
     <div className="container mx-auto py-10">
-      {/* Content */}
+      {/* コンテンツ */}
     </div>
   )
 }
 ```
 
-#### Adding Server Actions
+#### Server Actionsの追加
 ```typescript
 // app/actions.ts
 'use server'
 
 export async function saveInstruction(data: InstructionData) {
-  // Server-side logic with Supabase
+  // Supabaseを使用したサーバーサイドロジック
 }
 ```
 
-#### Integrating AI Streaming
+#### AIストリーミングの統合
 ```typescript
 'use client'
 import { useChat } from 'ai/react'
 
 export default function ChatComponent() {
   const { messages, input, handleInputChange, handleSubmit } = useChat()
-  // Use in your UI
+  // UIで使用
 }
 ```
 
-### When Adding Features
+### 機能追加時の注意点
 
-1. **Check the PRD**: Reference `Meirei-kun_PRD.md` for intended functionality
-2. **Database First**: Plan database changes before implementing features
-3. **UI Components**: Reuse existing shadcn/ui components before creating custom ones
-4. **AI Prompts**: Test prompt changes in isolation before deploying
+1. **PRDを確認**: `Meirei-kun_PRD.md`で意図された機能を参照
+2. **データベース優先**: 機能実装前にデータベース変更を計画
+3. **UIコンポーネント**: カスタムコンポーネント作成前に既存のshadcn/uiコンポーネントを再利用
+4. **AIプロンプト**: デプロイ前にプロンプト変更を単体でテスト
 
-### Testing Considerations
+### テストの考慮事項
 
-- **Manual Testing**: Currently no automated test suite
-- **Test Flows**:
+- **手動テスト**: 現在、自動テストスイートなし
+- **テストフロー**:
   1. Dashboard → New Instruction → Studio
-  2. Chat interaction with AI
-  3. JSON extraction and preview rendering
-  4. Resizable panel behavior
+  2. AIとのチャットインタラクション
+  3. JSON抽出とプレビューレンダリング
+  4. リサイズ可能パネルの動作
 
-## Environment Variables
+## 環境変数
 
-Required for local development and deployment:
+ローカル開発とデプロイに必要：
 
 ```bash
-# Supabase Configuration
+# Supabase設定
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
@@ -318,113 +318,113 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 GOOGLE_GENERATIVE_AI_API_KEY=your-gemini-api-key
 ```
 
-## Future Roadmap (Per PRD)
+## 将来のロードマップ（PRDより）
 
-### Planned Features
+### 予定されている機能
 
-1. **File Upload Implementation**
-   - Support for PDF, TXT, MD files
-   - Text extraction and context injection into Gemini prompts
+1. **ファイルアップロード実装**
+   - PDF、TXT、MDファイルのサポート
+   - テキスト抽出とGeminiプロンプトへのコンテキスト注入
 
-2. **Slack Bot Integration**
-   - Reuse `/api/chat` endpoint
-   - Slack Event API integration
-   - Flow: Slack mention → DM clarification → Channel post
+2. **Slack Bot統合**
+   - `/api/chat`エンドポイントの再利用
+   - Slack Event API統合
+   - フロー: Slackメンション → DM問答 → チャンネル投稿
 
-3. **Personalized Learning**
-   - Store user edits in `instruction_versions`
-   - Use as few-shot examples in prompts
-   - Learn individual writing styles
+3. **パーソナライズド学習**
+   - `instruction_versions`にユーザー編集を保存
+   - プロンプト内のFew-shot例として使用
+   - 個人の文体を学習
 
-4. **Team Knowledge Base**
-   - RAG implementation with pgvector
-   - Search across `context_assets`
-   - "Based on company guidelines" queries
+4. **チームナレッジベース**
+   - pgvectorによるRAG実装
+   - `context_assets`全体の検索
+   - 「社内規定に基づいて」というクエリ対応
 
-5. **Authentication**
-   - Supabase Auth integration
-   - Google OAuth provider
-   - Email/password authentication
+5. **認証**
+   - Supabase Auth統合
+   - Google OAuthプロバイダー
+   - Email/パスワード認証
 
-6. **Instruction Persistence**
-   - Save drafts to Supabase
-   - Publish and archive functionality
-   - Version history tracking
+6. **指示書の永続化**
+   - Supabaseへの下書き保存
+   - 公開とアーカイブ機能
+   - バージョン履歴追跡
 
-## Common Issues & Solutions
+## よくある問題と解決策
 
-### Issue: Gemini API Errors
-- **Solution**: Check `GOOGLE_GENERATIVE_AI_API_KEY` in environment
-- **Rate Limits**: Gemini 1.5 Pro has lower rate limits than Flash
+### 問題: Gemini APIエラー
+- **解決策**: 環境変数の`GOOGLE_GENERATIVE_AI_API_KEY`を確認
+- **レート制限**: Gemini 1.5 ProはFlashよりもレート制限が低い
 
-### Issue: JSON Extraction Fails
-- **Cause**: AI didn't output valid JSON in markdown block
-- **Solution**: Refine system prompt or add error handling in parsing logic
+### 問題: JSON抽出の失敗
+- **原因**: AIがマークダウンブロック内に有効なJSONを出力していない
+- **解決策**: システムプロンプトを改良するか、パース処理にエラーハンドリングを追加
 
-### Issue: Supabase Connection Fails
-- **Solution**: Verify environment variables and Supabase project status
-- **Check**: Browser console for CORS issues
+### 問題: Supabase接続の失敗
+- **解決策**: 環境変数とSupabaseプロジェクトのステータスを確認
+- **確認事項**: ブラウザコンソールでCORS問題をチェック
 
-## Performance Considerations
+## パフォーマンスの考慮事項
 
-1. **Edge Runtime**: Chat API uses Edge for low latency
-2. **Streaming**: Responses stream to client, improving perceived performance
-3. **Client-Side Rendering**: Studio page uses `"use client"` for interactivity
-4. **Bundle Size**: Tailwind CSS is optimized for production
+1. **Edge Runtime**: チャットAPIは低レイテンシーのためEdgeを使用
+2. **ストリーミング**: クライアントへのストリーミングレスポンスで体感パフォーマンスを向上
+3. **クライアントサイドレンダリング**: Studioページはインタラクティビティのため`"use client"`を使用
+4. **バンドルサイズ**: Tailwind CSSは本番環境向けに最適化
 
-## Security Notes
+## セキュリティノート
 
-1. **API Keys**: Never commit `.env.local` to version control
-2. **Supabase RLS**: Row-Level Security policies should be implemented in production
-3. **Input Validation**: Sanitize user inputs before database operations
-4. **CORS**: Configured through Next.js for API routes
+1. **APIキー**: `.env.local`をバージョン管理にコミットしない
+2. **Supabase RLS**: 本番環境では行レベルセキュリティポリシーを実装すべき
+3. **入力検証**: データベース操作前にユーザー入力をサニタイズ
+4. **CORS**: Next.jsを通じてAPIルート向けに設定
 
-## Deployment
+## デプロイ
 
-**Target Platform**: Vercel
+**対象プラットフォーム**: Vercel
 
-### Deployment Checklist
-1. Set environment variables in Vercel dashboard
-2. Connect GitHub repository
-3. Configure Supabase project for production
-4. Enable Vercel AI SDK features
-5. Test streaming functionality in production
+### デプロイチェックリスト
+1. Vercelダッシュボードで環境変数を設定
+2. GitHubリポジトリを接続
+3. 本番環境用にSupabaseプロジェクトを設定
+4. Vercel AI SDK機能を有効化
+5. 本番環境でストリーミング機能をテスト
 
-## Contributing Guidelines
+## コントリビューションガイドライン
 
-### For AI Assistants
+### AIアシスタント向け
 
-1. **Read Before Writing**: Always read existing files before modifying
-2. **Preserve Structure**: Maintain the 3-panel Studio layout pattern
-3. **Test Locally**: Verify changes with `npm run dev`
-4. **Document Changes**: Update this CLAUDE.md if adding major features
-5. **Follow PRD**: Reference `Meirei-kun_PRD.md` for feature requirements
+1. **書く前に読む**: 変更前に必ず既存ファイルを読む
+2. **構造を保つ**: Studio 3パネルレイアウトパターンを維持
+3. **ローカルテスト**: `npm run dev`で変更を検証
+4. **変更を文書化**: 主要機能追加時はこのCLAUDE.mdを更新
+5. **PRDに従う**: 機能要件は`Meirei-kun_PRD.md`を参照
 
-### Code Quality
+### コード品質
 
-- Write TypeScript with proper types (avoid `any`)
-- Use React Server Components where possible (default in App Router)
-- Optimize for readability over cleverness
-- Comment complex AI prompt logic
+- 適切な型を持つTypeScriptを記述（`any`を避ける）
+- 可能な限りReact Server Componentsを使用（App Routerのデフォルト）
+- 巧妙さより可読性を最適化
+- 複雑なAIプロンプトロジックにはコメントを付ける
 
-## Resources
+## リソース
 
-- **Next.js Docs**: https://nextjs.org/docs
+- **Next.js ドキュメント**: https://nextjs.org/docs
 - **Vercel AI SDK**: https://sdk.vercel.ai/docs
 - **shadcn/ui**: https://ui.shadcn.com
-- **Supabase Docs**: https://supabase.com/docs
+- **Supabase ドキュメント**: https://supabase.com/docs
 - **Gemini API**: https://ai.google.dev/docs
 
-## Questions & Support
+## 質問とサポート
 
-For questions about this codebase:
-1. Review the PRD (`Meirei-kun_PRD.md`) for product context
-2. Check this CLAUDE.md for architectural guidance
-3. Examine existing code patterns in similar features
-4. Test changes incrementally with the development server
+このコードベースに関する質問：
+1. 製品コンテキストについてはPRD（`Meirei-kun_PRD.md`）を確認
+2. アーキテクチャガイダンスについてはこのCLAUDE.mdを確認
+3. 類似機能の既存コードパターンを調査
+4. 開発サーバーで段階的に変更をテスト
 
 ---
 
-**Last Updated**: 2025-11-30
-**Project Version**: 0.1.0 (Early Development)
-**Status**: Active Development - Core features implemented, database integration pending
+**最終更新日**: 2025-11-30
+**プロジェクトバージョン**: 0.1.0（初期開発段階）
+**ステータス**: 開発中 - コア機能実装済み、データベース統合は保留中
