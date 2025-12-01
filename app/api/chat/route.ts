@@ -42,13 +42,75 @@ Output Schema (JSON Mode for Draft Preview):
 `;
 
 export async function POST(req: Request) {
-    const { messages } = await req.json();
+    try {
+        // Parse and validate request body
+        let body;
+        try {
+            body = await req.json();
+        } catch (error) {
+            console.error('Failed to parse request body:', error);
+            return new Response(
+                JSON.stringify({ error: 'Invalid JSON in request body' }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
 
-    const result = await streamText({
-        model: google('gemini-1.5-pro-latest'),
-        system: SYSTEM_PROMPT,
-        messages: convertToCoreMessages(messages),
-    });
+        const { messages } = body;
 
-    return result.toDataStreamResponse();
+        // Validate messages array
+        if (!messages || !Array.isArray(messages) || messages.length === 0) {
+            return new Response(
+                JSON.stringify({ error: 'Messages array is required and must not be empty' }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
+        // Check for API key
+        if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+            console.error('GOOGLE_GENERATIVE_AI_API_KEY is not configured');
+            return new Response(
+                JSON.stringify({ error: 'API configuration error. Please contact support.' }),
+                { status: 500, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
+        // Call Gemini API with streaming
+        const result = await streamText({
+            model: google('gemini-1.5-pro-latest'),
+            system: SYSTEM_PROMPT,
+            messages: convertToCoreMessages(messages),
+        });
+
+        return result.toDataStreamResponse();
+    } catch (error) {
+        console.error('Chat API error:', error);
+
+        // Handle specific error types
+        if (error instanceof Error) {
+            // API rate limit or quota errors
+            if (error.message.includes('quota') || error.message.includes('rate limit')) {
+                return new Response(
+                    JSON.stringify({ error: 'API rate limit exceeded. Please try again later.' }),
+                    { status: 429, headers: { 'Content-Type': 'application/json' } }
+                );
+            }
+
+            // API authentication errors
+            if (error.message.includes('API key') || error.message.includes('authentication')) {
+                return new Response(
+                    JSON.stringify({ error: 'API authentication failed. Please check configuration.' }),
+                    { status: 401, headers: { 'Content-Type': 'application/json' } }
+                );
+            }
+        }
+
+        // Generic error response
+        return new Response(
+            JSON.stringify({
+                error: 'An unexpected error occurred. Please try again.',
+                details: process.env.NODE_ENV === 'development' ? error instanceof Error ? error.message : String(error) : undefined
+            }),
+            { status: 500, headers: { 'Content-Type': 'application/json' } }
+        );
+    }
 }
